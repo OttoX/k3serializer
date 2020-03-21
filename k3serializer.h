@@ -84,9 +84,11 @@ protected:
 
 class K3SerializerByte : public K3SerializerBase
 {
-	static void PutChar(std::string& dst, char v) { dst += v; }
-	static bool GetChar(std::string_view& input, char* v);
+public:
+	static void PutByte(std::string& dst, uint8_t v) { dst += *reinterpret_cast<char*>(&v); }
+	static bool GetByte(std::string_view& input, uint8_t* v);
 };
+
 
 class K3SerializerVarint32 : public K3SerializerBase
 {
@@ -126,7 +128,13 @@ public:
 	}
 	static bool GetValue(std::string_view& src, T& v)
 	{
-		return GetVarint32(src, reinterpret_cast<uint32_t*>(&v));
+		uint32_t u;
+		if(GetVarint32(src, reinterpret_cast<uint32_t*>(&u)))
+		{
+			v = static_cast<T>(u);
+			return true;
+		}
+		return false;
 	}
 };
 
@@ -189,11 +197,17 @@ class K3Serializer<int16_t> : public K3SerializerVarint32 {
 public:
 	static void PutValue(std::string& dst, int16_t v)
 	{
-		PutVarint32(dst, v);
+		PutVarint32(dst, static_cast<uint32_t>(v));
 	}
 	static bool GetValue(std::string_view& src, int16_t& v)
 	{
-		return GetVarint32(src, reinterpret_cast<uint32_t*>(&v));
+		uint32_t u;
+		if(GetVarint32(src, reinterpret_cast<uint32_t*>(&u)))
+		{
+			v = static_cast<int16_t>(u);
+			return true;
+		}
+		return false;
 	}
 };
 template<>
@@ -201,11 +215,53 @@ class K3Serializer<uint16_t> : public K3SerializerVarint32 {
 public:
 	static void PutValue(std::string& dst, uint16_t v)
 	{
-		PutVarint32(dst, v);
+		PutVarint32(dst, static_cast<uint32_t>(v));
 	}
 	static bool GetValue(std::string_view& src, uint16_t& v)
 	{
-		return GetVarint32(src, reinterpret_cast<uint32_t*>(&v));
+		uint32_t u;
+		if(GetVarint32(src, reinterpret_cast<uint32_t*>(&u)))
+		{
+			v = static_cast<uint16_t>(u);
+			return true;
+		}
+		return false;
+	}
+};
+template<>
+class K3Serializer<char> : public K3SerializerByte {
+public:
+	static void PutValue(std::string& dst, char v)
+	{
+		PutByte(dst, v);
+	}
+	static bool GetValue(std::string_view& src, char& v)
+	{
+		return GetByte(src, reinterpret_cast<uint8_t*>(&v));
+	}
+};
+template<>
+class K3Serializer<int8_t> : public K3SerializerByte {
+public:
+	static void PutValue(std::string& dst, int8_t v)
+	{
+		PutByte(dst, v);
+	}
+	static bool GetValue(std::string_view& src, int8_t& v)
+	{
+		return GetByte(src, reinterpret_cast<uint8_t*>(&v));
+	}
+};
+template<>
+class K3Serializer<uint8_t> : public K3SerializerByte {
+public:
+	static void PutValue(std::string& dst, uint8_t v)
+	{
+		PutByte(dst, v);
+	}
+	static bool GetValue(std::string_view& src, uint8_t& v)
+	{
+		return GetByte(src, &v);
 	}
 };
 
@@ -214,14 +270,14 @@ class K3Serializer<float> : public K3SerializerFixed32 {
 public:
 	static void PutValue(std::string& dst, float v)
 	{
-		union { float f; uint32_t i; };
+		union { float f; uint32_t u; };
 		f = v;
-		PutFixed32(dst, i);
+		PutFixed32(dst, u);
 	}
 	static bool GetValue(std::string_view& src, float& v)
 	{
-		union { float f; uint32_t i; };
-		if(GetFixed32(src, &i))
+		union { float f; uint32_t u; };
+		if(GetFixed32(src, &u))
 		{
 			v = f;
 			src.remove_prefix(sizeof(float));

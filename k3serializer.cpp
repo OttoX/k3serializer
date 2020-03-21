@@ -125,14 +125,14 @@ const char* K3SerializerBase::GetVarint64Ptr(const char* p, const char* limit, u
 	return nullptr;
 }
 
-bool K3SerializerByte::GetChar(std::string_view& input, char* v)
+bool K3SerializerByte::GetByte(std::string_view& input, uint8_t* v)
 {
-	if (input.size() < sizeof(char))
+	if (input.size() < sizeof(uint8_t))
 	{
 		return false;
 	}
-	*v = input.front();
-	input.remove_prefix(sizeof(char));
+	*v = static_cast<uint8_t>(input.front());
+	input.remove_prefix(sizeof(uint8_t));
 	return true;
 }
 
@@ -174,7 +174,7 @@ bool K3SerializerFixed32::GetFixed32(std::string_view& input, uint32_t* v)
 
 void K3SerializerVarint64::PutVarint64(std::string& dst, uint64_t v)
 {
-	char buf[5];
+	char buf[10];
 	char* ptr = EncodeVarint64(buf, v);
 	dst.append(buf, ptr - buf);
 }
