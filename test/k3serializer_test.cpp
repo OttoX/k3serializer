@@ -6,6 +6,17 @@
 #include <limits>
 #include <algorithm>
 
+TEST_CASE( "test lenth", "[VarintLength]" ) {
+	int in1 = 255;
+	uint64_t in2 = static_cast<uint32_t>(-1);
+	uint64_t in3 = 0x123456789ABCDEF;
+	uint64_t in4 = std::numeric_limits<uint64_t>::max();
+	REQUIRE((K3SerializerBase::VarintLength(in1) == 2));
+	REQUIRE((K3SerializerBase::VarintLength(in2) == 5));
+	REQUIRE((K3SerializerBase::VarintLength(in3) == 9));
+	REQUIRE((K3SerializerBase::VarintLength(in4) == 10));
+}
+
 TEST_CASE( "testing byte", "[char, int8_t, uint8_t]" ) {
     std::string str;
     char inChar = 'a';
@@ -26,9 +37,9 @@ TEST_CASE( "testing byte", "[char, int8_t, uint8_t]" ) {
 
 TEST_CASE( "testing varint32", "[int16_t, uint16_t, int32_t, uint32_t]" ) {
     std::string str;
-    int16_t inInt16 = 0xFFFF;
+    int16_t inInt16 = -13579;
     uint16_t inUInt16 = 0xFFFF;
-    int32_t inInt32 = -1;
+    int32_t inInt32 = 0x12345678;
     uint32_t inUInt32 = -1;
     K3Serializer<int16_t>::PutValue(str, inInt16);
     K3Serializer<uint16_t>::PutValue(str, inUInt16);
@@ -306,4 +317,22 @@ TEST_CASE( "testing complicated object", "[inherited-class]" ) {
 	K3Serializer<Student>::GetValue(input, stu2);
 
     REQUIRE((stu1==stu2));
+}
+
+TEST_CASE( "testing error branch", "[error]" ) {
+	std::string_view input;
+    char c = 'a';
+    uint32_t u;
+    int64_t l;
+    REQUIRE((K3Serializer<char>::GetValue(input, c) == false));
+    REQUIRE((K3Serializer<uint32_t>::GetValue(input, u) == false));
+    REQUIRE((K3Serializer<int64_t>::GetValue(input, l) == false));
+    std::string str;
+    K3Serializer<char>::PutValue(str, c);
+    input = str;
+    float f = 12345678.9999;
+    REQUIRE((K3Serializer<float>::GetValue(input, f) == false));
+    K3Serializer<float>::PutValue(str, f);
+    double d = std::numeric_limits<double>::max();;
+    REQUIRE((K3Serializer<double>::GetValue(input, d) == false));
 }

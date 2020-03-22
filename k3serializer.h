@@ -44,8 +44,9 @@ namespace port
 
 class K3SerializerBase
 {
-protected:
+public:
 	static int VarintLength(uint64_t v);
+protected:
 	static void EncodeFixed32(char* buf, uint32_t v);
 	static char* EncodeVarint32(char* dst, uint32_t v);
 	static const char* GetVarint32Ptr(const char* p, const char* limit, uint32_t* v);
@@ -84,7 +85,7 @@ protected:
 
 class K3SerializerByte : public K3SerializerBase
 {
-public:
+protected:
 	static void PutByte(std::string& dst, uint8_t v) { dst += *reinterpret_cast<char*>(&v); }
 	static bool GetByte(std::string_view& input, uint8_t* v);
 };
@@ -92,28 +93,28 @@ public:
 
 class K3SerializerVarint32 : public K3SerializerBase
 {
-public:
+protected:
 	static void PutVarint32(std::string& dst, uint32_t v);
 	static bool GetVarint32(std::string_view& input, uint32_t* v);
 };
 
 class K3SerializerFixed32 : public K3SerializerBase
 {
-public:
+protected:
 	static void PutFixed32(std::string& dst, uint32_t v);
 	static bool GetFixed32(std::string_view& input, uint32_t* v);
 };
 
 class K3SerializerVarint64 : public K3SerializerBase
 {
-public:
+protected:
 	static void PutVarint64(std::string& dst, uint64_t v);
 	static bool GetVarint64(std::string_view& input, uint64_t* v);
 };
 
 class K3SerializerFixed64 : public K3SerializerBase
 {
-public:
+protected:
 	static void PutFixed64(std::string& dst, uint64_t v);
 	static bool GetFixed64(std::string_view& input, uint64_t* v);
 };
