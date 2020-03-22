@@ -39,7 +39,7 @@ TEST_CASE( "testing varint32", "[int16_t, uint16_t, int32_t, uint32_t]" ) {
     std::string str;
     int16_t inInt16 = -13579;
     uint16_t inUInt16 = 0xFFFF;
-    int32_t inInt32 = 0x12345678;
+	int32_t inInt32 = 0xABCDEF;
     uint32_t inUInt32 = -1;
     K3Serializer<int16_t>::PutValue(str, inInt16);
     K3Serializer<uint16_t>::PutValue(str, inUInt16);
