@@ -2,8 +2,14 @@ language: cpp
 dist: bionic
 compiler: gcc
 
+before_install:
+  - pip install --user cpp-coveralls
+
 script: 
   - mkdir build && cd build;
   - cmake .. -DBUILD_COVERAGE=true;
   - cmake --build .;
   - ctest;
+
+after_success:
+  - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
