@@ -3,6 +3,7 @@ dist: bionic
 compiler: gcc
 
 script: 
+  - mkdir build && cd build;
   - cmake .. -DBUILD_COVERAGE=true;
   - cmake --build .;
   - ctest;
