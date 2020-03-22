@@ -1,0 +1,8 @@
+language: cpp
+dist: bionic
+compiler: gcc
+
+script: 
+  - cmake .. -DBUILD_COVERAGE=true;
+  - cmake --build .;
+  - ctest;
