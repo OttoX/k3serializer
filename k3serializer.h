@@ -417,13 +417,14 @@ public:
 		PutMember(dst, &obj, T::kMetaClassMember, std::make_index_sequence<memberSize>{});
 	}
 	static bool GetValue(std::string_view& src, T& obj)
-	{
+	{		
+		bool result = true;
 		if constexpr (!std::is_same_v<typename T::SuperClass, void>)
 		{
-			K3Serializer<typename T::SuperClass>::GetValue(src, obj);
+			result = result && K3Serializer<typename T::SuperClass>::GetValue(src, obj);
 		}
 		constexpr auto memberSize = std::tuple_size_v<decltype(T::kMetaClassMember)>;
-		return GetMember(src, &obj, T::kMetaClassMember, std::make_index_sequence<memberSize>{});
+		return result && GetMember(src, &obj, T::kMetaClassMember, std::make_index_sequence<memberSize>{});
 	}
 protected:
 	template <typename O, typename... Args, std::size_t... Idx>
