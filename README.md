@@ -1,12 +1,42 @@
 # k3serializer
 
-A fast, clean and small binary serializer based on modern c++17.
+### Introduction
+K3Serializer is a fast, clean and small serializer based on modern c++17. It has some advantages: 
+ * Reflection-Based Serialization/Deserialization. 
+ * Less Memory Occupation.
+ * High Performance.
+ * Compatible And No Extra Dependency.
+ * STL-Container And Inherited-Class Serialization Support.
+ * Flexiable Extendablity.
 
-[中文介绍](https://github.com/OttoX/k3serializer/blob/master/README_CN.md)
-
-
+### Build Status
 [![Build Status](https://api.travis-ci.org/OttoX/k3serializer.svg?branch=master)](https://travis-ci.org/github/OttoX/k3serializer) [![Coverage Status](https://coveralls.io/repos/github/OttoX/k3serializer/badge.svg?branch=master)](https://coveralls.io/github/OttoX/k3serializer?branch=master)
 
+### Installation (C++17 Required)
+Head-Only. Just copy k3serializer.h and k3serializer.cpp to your project.
+
+**Run Test:**
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+ctest
+```
+
+
+### Benchmark Tests
+I use this [library](https://github.com/chronoxor/CppSerialization) to do performance comparison. Here is the result on my computer:
+
+| Protocol                                                                     | Message size | Serialization time | Deserialization time |
+| :--------------------------------------------------------------------------: | -----------: | -----------------: | -------------------: |
+| [Cap'n'Proto](https://capnproto.org)                                         |    208 bytes |             280 ns |               276 ns |
+| [FastBinaryEncoding](https://github.com/chronoxor/FastBinaryEncoding)        |    234 bytes |              47 ns |                90 ns |
+| [FlatBuffers](https://google.github.io/flatbuffers)                          |    280 bytes |             345 ns |               105 ns |
+| [Protobuf](https://developers.google.com/protocol-buffers)                   |    120 bytes |             372 ns |               488 ns |
+| [SimpleBinaryEncoding](https://github.com/real-logic/simple-binary-encoding) |    138 bytes |              30 ns |                73 ns |
+| [RapidJson](http://rapidjson.org)                                            |    297 bytes |             713 ns |               352 ns |
+| K3Serializer                                           					   |     97 bytes |             146 ns |               255 ns |
 
 ### Example: base type
 ```c++
